@@ -393,7 +393,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
   }
   if(class(fit) == "character"){
     message(paste0("Model failed to run: ", method))
-    
+   
   } else if(class(fit) == "train"){
     callList2 <- list("fit" = quote(fit), 
                       "datatype" = datatype, 
@@ -402,8 +402,9 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                       "modelKeep" = modelKeep)
     
     fitSum <- do.call(modAcc, callList2)
+    return(fitSum)
     } 
-  return(fitSum)
+  
 }
 
 ##' @title Generate an empty dataframe to match \code{\link{modAcc}} lists

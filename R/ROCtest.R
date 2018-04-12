@@ -151,8 +151,15 @@ ROCtest.train <- function(mod, testdata, ...){
                  smooth = FALSE)
     a <- mroc$auc[1]
     thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
-                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+    
+    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
+                          reference = yhats$.outcome, 
+                          positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 
@@ -178,8 +185,16 @@ ROCtest.train <- function(mod, testdata, ...){
                 smooth = FALSE)
     a <- mroc$auc[1]
     thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
-                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
+    
+    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
+                          reference = yhats$.outcome, 
+                          positive = levels(yhats$.outcome)[1])
+    
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
                    falsepositive=1 - cm$byClass["Neg Pred Value"], 

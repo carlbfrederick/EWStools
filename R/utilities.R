@@ -189,14 +189,13 @@ modSearchResults <- function (df, n = 5)
 probExtract <- function(mod, testdata = NULL){
   if(class(mod)[1] == "caretEnsemble"){
     if(missing(testdata)){
-      yhats <- predict(mod, keepNA = TRUE) # caretEnsemble seems to predict non-reference class
+      yhats <- predict(mod, keepNA = TRUE, type = "prob") 
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome = mod$models[[1]]$trainingData$.outcome)
+                          .outcome = testdata$class)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
-                                                        # proper class
       return(yhats)
     } else {
-      yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds)
+      yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds, type = "prob")
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
                           .outcome = testdata$class)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
@@ -233,14 +232,15 @@ probExtract <- function(mod, testdata = NULL){
     } else if(class(mod)[1] == "caretStack"){
       if(missing(testdata)){
         yhats <- predict(mod, type = "prob") # caretEnsemble seems to predict non-reference class
-        yhats <- data.frame(yhat = yhats[, 2], yhatInv = yhats[, 1], 
-                            .outcome = mod$models[[1]]$trainingData$.outcome)
+        yhats <- data.frame(yhat = yhats, 
+                            yhatInv = 1 - yhats, 
+                            .outcome = testdata$class)
         names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
-        # proper class
         return(yhats)
       } else {
         yhats <- predict(mod, type = "prob", newdata = testdata$preds)
-        yhats <- data.frame(yhat = yhats[, 2], yhatInv = yhats[, 1], 
+        yhats <- data.frame(yhat = yhats, 
+                            yhatInv = 1 - yhats, 
                             .outcome = testdata$class)
         names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
         return(yhats)
