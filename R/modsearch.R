@@ -333,6 +333,7 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                     testdata=NULL, 
                       modelKeep=FALSE, length = NULL, fitControl = NULL, 
                     metric = NULL, cores = NULL, ...){
+  message("---- Starting ", method, " at ", Sys.time(), " ", paste0(rep("-", 50), collapse = ""))
   args <- eval(substitute(alist(...)))
   args <- lapply(args, eval, parent.frame())
     if("omit" %in% names(args)){
@@ -393,7 +394,6 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
   }
   if(class(fit) == "character"){
     message(paste0("Model failed to run: ", method))
-   
   } else if(class(fit) == "train"){
     callList2 <- list("fit" = quote(fit), 
                       "datatype" = datatype, 
@@ -401,7 +401,11 @@ modTest <- function(method, datatype=c("train", "test"), traindata,
                                               class = testdata$class )),
                       "modelKeep" = modelKeep)
     
-    fitSum <- do.call(modAcc, callList2)
+    fitSum <- tryCatch({
+      do.call(modAcc, callList2)},
+       error = function(e)
+              message(paste0("Model result for ", method, " was malformed. EWStools::modAcc failed.")))
+    
     return(fitSum)
     } 
   
