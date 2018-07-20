@@ -143,6 +143,7 @@ ROCtest.glm <- function(mod, testdata, ...){
 ##' @method ROCtest train
 ##' @export
 ##' @import caret
+
 ROCtest.train <- function(mod, testdata, ...){
   if(missing(testdata)){
     yhats <- probExtract(mod)
@@ -217,7 +218,13 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
                 smooth = FALSE)
     a <- mroc$auc[1]
     modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
+
+      model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -244,7 +251,13 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
                 smooth = FALSE)
     a <- mroc$auc[1]
     modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
+    
+    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -268,7 +281,12 @@ ROCtest.caretStack <- function(mod, testdata, ...){
                 smooth = FALSE)
     a <- mroc$auc[1]
     modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
+    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
@@ -295,7 +313,12 @@ ROCtest.caretStack <- function(mod, testdata, ...){
                 smooth = FALSE)
     a <- mroc$auc[1]
     modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = modThresh), 
+    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    if (class(model_preds) != "factor") {
+      model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
+    }
+    
+    cm <- confusionMatrix(data = model_preds, 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=modThresh, auc=a, confusematrix=cm, 
                    rarepercent=cm$byClass["Neg Pred Value"], 
