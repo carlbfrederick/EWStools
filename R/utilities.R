@@ -193,14 +193,14 @@ probExtract <- function(mod, testdata = NULL){
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
                           .outcome = testdata$class,
                           stringsAsFactors = TRUE)
-      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+      #names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     } else {
       yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds, type = "prob")
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
                           .outcome = testdata$class,
                           stringsAsFactors = TRUE)
-      names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
+      #names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     }
   } else if(class(mod)[1]== "train"){
