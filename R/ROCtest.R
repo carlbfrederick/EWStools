@@ -91,7 +91,7 @@ ROCtest.glm <- function(mod, testdata, ...){
    # message("Generating ROC...")
     mroc <- pROC::roc(.outcome ~ yhat, percent=TRUE, data = yhats)
     a <- mroc$auc[1]
-    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                          reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -123,7 +123,7 @@ ROCtest.glm <- function(mod, testdata, ...){
     #message("Generating ROC...")
     mroc <- pROC::roc(.outcome ~ yhat, percent=TRUE, data=yhats, smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
     cm <- confusionMatrix(reclassProb(yhats = yhats, thresh = thresh), 
                           reference = yhats$.outcome, positive = levels(yhats$.outcome)[1])
     myROC <- ROCit(thresh=thresh, auc=a, confusematrix=cm, 
@@ -151,7 +151,7 @@ ROCtest.train <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                  smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
     
     model_preds <- reclassProb(yhats = yhats, thresh = thresh)
     if (class(model_preds) != "factor") {
@@ -185,7 +185,7 @@ ROCtest.train <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    thresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
+    thresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
     
     model_preds <- reclassProb(yhats = yhats, thresh = thresh)
     if (class(model_preds) != "factor") {
@@ -217,9 +217,9 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-
-      model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
+    
+    model_preds <- reclassProb(yhats = yhats, thresh = modThresh)
     if (class(model_preds) != "factor") {
       model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
     }
@@ -250,9 +250,9 @@ ROCtest.caretEnsemble <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
     
-    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    model_preds <- reclassProb(yhats = yhats, thresh = modThresh)
     if (class(model_preds) != "factor") {
       model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
     }
@@ -280,8 +280,8 @@ ROCtest.caretStack <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
+    model_preds <- reclassProb(yhats = yhats, thresh = modThresh)
     if (class(model_preds) != "factor") {
       model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
     }
@@ -312,8 +312,8 @@ ROCtest.caretStack <- function(mod, testdata, ...){
     mroc <- pROC::roc(.outcome ~ yhat, data=yhats, percent=TRUE, algorithm=2, 
                 smooth = FALSE)
     a <- mroc$auc[1]
-    modThresh <- pROC::coords(mroc, x="best", ret="threshold", ...)[1]
-    model_preds <- reclassProb(yhats = yhats, thresh = thresh)
+    modThresh <- pROC::coords(mroc, x="best", ret="threshold", transpose = TRUE, as.matrix = TRUE, ...)[1]
+    model_preds <- reclassProb(yhats = yhats, thresh = modThresh)
     if (class(model_preds) != "factor") {
       model_preds <- factor(model_preds, levels = levels(yhats$.outcome))
     }

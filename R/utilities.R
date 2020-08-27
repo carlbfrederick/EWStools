@@ -191,13 +191,15 @@ probExtract <- function(mod, testdata = NULL){
     if(missing(testdata)){
       yhats <- predict(mod, keepNA = TRUE, type = "prob") 
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome = testdata$class)
+                          .outcome = testdata$class,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     } else {
       yhats <- predict(mod, keepNA = TRUE, newdata = testdata$preds, type = "prob")
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome = testdata$class)
+                          .outcome = testdata$class,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     }
@@ -205,13 +207,15 @@ probExtract <- function(mod, testdata = NULL){
     if(missing(testdata)){
       yhats <- predict(mod, type = "prob")
       yhats <- data.frame(yhats, 
-                          .outcome = mod$trainingData$.outcome)
+                          .outcome = mod$trainingData$.outcome,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhat", "yhatInv", ".outcome")
       return(yhats)
     } else {
       yhats <- predict(mod, newdata = testdata$preds, type = "prob")
       yhats <- data.frame(yhats, 
-                          .outcome = testdata$class)
+                          .outcome = testdata$class,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhat", "yhatInv", ".outcome")
       return(yhats)
     }
@@ -219,13 +223,15 @@ probExtract <- function(mod, testdata = NULL){
     if(missing(testdata)){
       yhats <- predict(mod, type = "response")
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome = mod$y)
+                          .outcome = mod$y,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     } else {
       yhats <- predict(mod, newdata = testdata$preds, type = "response")
       yhats <- data.frame(yhat = yhats, yhatInv = 1 - yhats, 
-                          .outcome =  testdata$class)
+                          .outcome =  testdata$class,
+                          stringsAsFactors = TRUE)
       names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
       return(yhats)
     }
@@ -234,14 +240,16 @@ probExtract <- function(mod, testdata = NULL){
         yhats <- predict(mod, type = "prob") # caretEnsemble seems to predict non-reference class
         yhats <- data.frame(yhat = yhats, 
                             yhatInv = 1 - yhats, 
-                            .outcome = testdata$class)
+                            .outcome = testdata$class,
+                            stringsAsFactors = TRUE)
         names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
         return(yhats)
       } else {
         yhats <- predict(mod, type = "prob", newdata = testdata$preds)
         yhats <- data.frame(yhat = yhats, 
                             yhatInv = 1 - yhats, 
-                            .outcome = testdata$class)
+                            .outcome = testdata$class,
+                            stringsAsFactors = TRUE)
         names(yhats) <- c("yhatInv", "yhat", ".outcome") # hack to make prediction line up with 
         return(yhats)
       }
@@ -273,6 +281,10 @@ reclassProb <- function(yhats, thresh){
   }
   if(class(yhats$yhat) != "numeric"){
     stop("Check predictions, yhat must be numeric")
+  }
+  
+  if (inherits(thresh, "data.frame")) {
+    thresh <- thresh$threshold
   }
   predLvl <- levels(yhats$.outcome)[1]
   yclass <- ifelse(yhats$yhat >= thresh, predLvl, levels(yhats$.outcome)[2])
